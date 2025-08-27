@@ -1,0 +1,29 @@
+{
+  "name": "grocefy",
+  "version": "1.0.0",
+  "description": "A backend project that demonstrates **CRUD, authentication, authorization, middleware, and validation** with a real-world use case.",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node script.js",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AshmitSherigar/Grocefy.git"
+  },
+  "keywords": [],
+  "author": "AshmitSherigar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AshmitSherigar/Grocefy/issues"
+  },
+  "homepage": "https://github.com/AshmitSherigar/Grocefy#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.34.0",
+    "globals": "^16.3.0"
+  }
+}
