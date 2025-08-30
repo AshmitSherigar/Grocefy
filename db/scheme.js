@@ -1,5 +1,5 @@
 const mongoose = require("mongoose")
-const { Schema , model } = mongoose
+const { Schema, model } = mongoose
 
 const UserSchema = new Schema({
     username: { type: String, required: true, trim: true },
@@ -9,9 +9,14 @@ const UserSchema = new Schema({
     },
     password: { type: String, required: true },
 })
-
-const User = model("User" , UserSchema)
+const AdminSchema = new Schema({
+    username: { type: String, required: true, trim: true },
+    password: { type: String, required: true }
+})
+const User = model("User", UserSchema)
+const Admin = model("Admin",AdminSchema)
 
 module.exports = {
-    User
+    User,
+    Admin
 }
