@@ -1,15 +1,12 @@
 const express = require("express")
 const mongoose = require("mongoose")
-const jwt = require("jsonwebtoken")
-const { User, Admin } = require("./db/scheme")
+const userRoutes = require("./routes/userRoute")
+const adminRoutes = require("./routes/adminRoute")
 const app = express()
 const PORT = 5000
-const JWT_SECRET = "ashmitsecret"
-
 
 app.use(express.json())
 mongoose.connect("mongodb://localhost:27017/grocefy")
-
 
 // Test Route
 app.get("/", (_, res) => {
@@ -19,74 +16,12 @@ app.get("/", (_, res) => {
     })
 
 })
-
-// User Routes
-app.post("user/auth/register", (req, res) => {
-    const { username, email, password } = req.body
-    User.create({
-        username,
-        email,
-        password
-    }).then(() => {
-        res.json({
-            message: "User has successfully been created"
-        })
-    }).catch((err) => {
-        res.json({
-            message: "User cannot be created",
-            error: err.message
-        })
-    })
-})
-
-app.post("user/auth/login", (req, res) => {
-    const { email, password } = req.body
-
-    User.findOne({ email })
-        .then((user) => {
-
-            const isMatch = user.password === password
-
-            if (!isMatch) return res.status(400).json({ error: "Invalid Credential" })
-
-            const token = jwt.sign({ uid: user._id, username: user.name }, JWT_SECRET)
-
-            res.status(200).json({ token, user: { id: user._id, username: user.username, email: user.email } })
-
-        }).catch(() => {
-            res.status(400).json({ message: "User not found" })
-        })
-})
-
+// User Route
+app.use("/user", userRoutes)
 // Admin Route
-app.post("/admin/auth/register", (req, res) => {
+app.use("/admin", adminRoutes)
 
-    const { username, password } = req.body
 
-    Admin.create({ username, password })
-        .then(() => {
-            res.status(200).json({ message: "Admin has been created" })
-        })
-        .catch((err) => {
-            res.status(400).json({ message: "Admin cannot be created", error: err.message })
-        })
-
-})
-app.post("/admin/auth/login", (req, res) => {
-
-    const { username, password } = req.body
-    Admin.findOne({ username })
-        .then((admin) => {
-            const isMatch = admin.password === password
-            if (!isMatch) return res.status(400).json({ message: "Invalid Credentials" })
-
-            const token = jwt.sign({ id: admin._id, username }, JWT_SECRET)
-
-            res.status(200).json({ token, admin: { id: admin._id, username } })
-        }).catch(() => {
-            res.status(400).json({ message: "Admin not found" })
-        })
-})
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 })
