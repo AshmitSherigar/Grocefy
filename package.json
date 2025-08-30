@@ -20,7 +20,9 @@
   },
   "homepage": "https://github.com/AshmitSherigar/Grocefy#readme",
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.18.0"
   },
   "devDependencies": {
     "eslint": "^9.34.0",
