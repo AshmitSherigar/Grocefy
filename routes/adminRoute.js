@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const { Admin } = require("../db/scheme")
-const JWT_SECRET = "ashmitsecret"
+const JWT_SECRET = process.env.JWT_SECRET
 const jwt = require("jsonwebtoken")
 
 // Admin Route
