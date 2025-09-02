@@ -21,7 +21,7 @@ router.post("/auth/login", (req, res) => {
         .then((admin) => {
             const isMatch = admin.password === password
             if (!isMatch) return res.status(400).json({ message: "Invalid Credentials" })
-            const token = jwt.sign({ id: admin._id, username }, JWT_SECRET)
+            const token = jwt.sign({ uid: admin._id, username }, JWT_SECRET)
             res.status(200).json({ token, admin: { id: admin._id, username } })
         }).catch(() => {
             res.status(400).json({ message: "Admin not found" })

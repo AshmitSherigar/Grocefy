@@ -49,7 +49,7 @@ This service allows users to create and manage recipes, generate grocery lists b
 ### Recipes
 - `GET /recipes` → List all recipes (user-owned + shared/public)  
 - `POST /recipes` → Create recipe  
-- `PUT /recipes/:id` → Update recipe (owner or admin only)  
+- `PUT /recipes/:id` → Update recipe (owner or admin only) 
 - `DELETE /recipes/:id` → Delete recipe  
 
 ### Sharing

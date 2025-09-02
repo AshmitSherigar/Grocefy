@@ -9,7 +9,7 @@ const app = express()
 const PORT = process.env.PORT || 5000
 const MONGO_URL = process.env.MONGO_URL;
 
-const { Recipe } = require("./db/scheme")
+const { Recipe, Admin } = require("./db/scheme")
 
 // Middleware
 app.use(express.json()) // Parse the body
@@ -36,13 +36,11 @@ app.use("/admin", adminRoutes)
 app.get("/recipe", (_, res) => {
     Recipe.find({ visibility: "public" }).populate("owner", "username email")
         .then((publicRecipe) => {
-            res.status(200).json( publicRecipe )
+            res.status(200).json(publicRecipe)
         })
         .catch((err) => {
             res.status(500).json({ message: "Server Error", error: err.message })
         })
-
-
 
 })
 app.post("/recipe", authMiddleware, (req, res) => {
@@ -69,6 +67,111 @@ app.post("/recipe", authMiddleware, (req, res) => {
 
 })
 
+
+app.put("/recipe/:id", authMiddleware, (req, res) => {
+
+    const { id } = req.params
+    const userId = req.user.id
+    const updates = req.body
+
+
+    Admin.findOne({ _id: userId })
+        .then((isAdmin) => {
+            if (!isAdmin) {
+                Recipe.findOneAndUpdate(
+                    { _id: id, owner: userId },
+                    { $set: updates },
+                    { new: true, upsert: false }
+                )
+                    .then((updatedRecipe) => {
+                        if (!updatedRecipe) {
+                            return res.status(400).json({ message: "No such recipes available under your username" })
+                        }
+
+                        res.status(200).json(updatedRecipe)
+
+                    })
+                    .catch((err) => {
+
+                        res.json({ message: "Server Error", error: err.message })
+
+                    })
+            } else {
+                Recipe.findOneAndUpdate(
+                    { _id: id },
+                    { $set: updates },
+                    { new: true }
+                )
+                    .then((updatedRecipe) => {
+
+                        if (!updatedRecipe) {
+                            return res.status(400).json({ message: "No such recipes available" })
+                        }
+
+                        res.status(200).json(updatedRecipe)
+
+                    })
+                    .catch((err) => {
+
+                        res.json({ message: "Server Error", error: err.message })
+
+                    })
+
+            }
+
+        })
+
+
+
+
+
+
+})
+app.delete("/recipe/:id", authMiddleware, (req, res) => {
+
+    const { id } = req.params
+
+    const userId = req.user.id
+
+    Admin.findOne({ _id: userId })
+        .then((isAdmin) => {
+            if (!isAdmin) {
+
+                Recipe.deleteOne({ _id: id, owner: userId })
+                    .then((deletedRecipe) => {
+                        if (!deletedRecipe) {
+
+                            return res.status(400).json({ message: "No such recipes available under your username" })
+
+
+                        }
+                        res.status(200).json(deletedRecipe)
+                    })
+                    .catch((err) => {
+
+                        res.status(400).json({ message: "Server Error", error: err.message })
+                    })
+            } else {
+
+                Recipe.deleteOne({ _id: id })
+                    .then((deletedRecipe) => {
+                        if (!deletedRecipe) {
+
+                            return res.status(400).json({ message: "No such recipes available to delete" })
+
+
+                        }
+                        res.status(200).json(deletedRecipe)
+                    })
+                    .catch((err) => {
+
+                        res.status(400).json({ message: "Server Error", error: err.message })
+                    })
+
+            }
+        })
+
+})
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 })

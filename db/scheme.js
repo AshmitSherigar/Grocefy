@@ -2,15 +2,15 @@ const mongoose = require("mongoose")
 const { Schema, model } = mongoose
 
 const UserSchema = new Schema({
-    username: { type: String, required: true, trim: true },
+    username: { type: String, required: true, trim: true, unique: true },
     email: {
         type: String, required: true, lowercase: true, trim: true, match:
-            [/.+\@.+\..+/, "Please Enter Valid Email"]
+            [/.+\@.+\..+/, "Please Enter Valid Email"], unique: true
     },
     password: { type: String, required: true },
 })
 const AdminSchema = new Schema({
-    username: { type: String, required: true, trim: true },
+    username: { type: String, required: true, trim: true ,unique : true},
     password: { type: String, required: true }
 })
 const recipeSchema = new Schema({
@@ -39,7 +39,7 @@ const recipeSchema = new Schema({
 })
 const User = model("User", UserSchema)
 const Admin = model("Admin", AdminSchema)
-const Recipe = model("Recipe",recipeSchema)
+const Recipe = model("Recipe", recipeSchema)
 
 module.exports = {
     User,
