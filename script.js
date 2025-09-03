@@ -4,6 +4,7 @@ const mongoose = require("mongoose")
 const userRoutes = require("./routes/userRoute")
 const adminRoutes = require("./routes/adminRoute")
 const authMiddleware = require("./middleware/authMiddleare")
+const { v4: uuidv4 } = require("uuid")
 const app = express()
 
 const PORT = process.env.PORT || 5000
@@ -32,7 +33,7 @@ app.get("/", (_, res) => {
 app.use("/user", userRoutes)
 // Admin Route
 app.use("/admin", adminRoutes)
-
+//Recipe Route
 app.get("/recipe", (_, res) => {
     Recipe.find({ visibility: "public" }).populate("owner", "username email")
         .then((publicRecipe) => {
@@ -170,6 +171,51 @@ app.delete("/recipe/:id", authMiddleware, (req, res) => {
 
             }
         })
+
+})
+app.get("/recipe/:id/share", authMiddleware, (req, res) => {
+
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    Recipe.findOne({ _id: id, owner: userId }).select("+shareToken")
+        .then(async (recipe) => {
+            if (!recipe) return res.status(404).json({ message: "Recipe not found or not owned by you" })
+
+            if (!recipe.shareToken) {
+                recipe.shareToken = uuidv4();
+                await recipe.save();
+            }
+            const shareLink = `http://localhost:5000/share/${recipe.shareToken}`;
+            res.json({ shareLink });
+        })
+        .catch((err) => {
+            res.status(500).json({ message: "Server error", error: err.message });
+        });
+
+
+
+})
+app.get("/recipe/share/:token", (req, res) => {
+
+    const { token } = req.params;
+
+    Recipe.findOne({ shareToken: token }).select("+shareToken").populate("owner", 'username email')
+        .then(async (recipe) => {
+            if (!recipe) return res.status(404).json({ message: "Invalid Link" })
+            res.json({
+                title: recipe.title,
+                description: recipe.description,
+                ingredients: recipe.ingredients,
+                steps: recipe.steps,
+                owner: recipe.owner.username
+            });
+        })
+        .catch((err) => {
+            res.status(500).json({ message: "Server error", error: err.message });
+        });
+
+
 
 })
 app.listen(PORT, () => {

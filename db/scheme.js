@@ -10,7 +10,7 @@ const UserSchema = new Schema({
     password: { type: String, required: true },
 })
 const AdminSchema = new Schema({
-    username: { type: String, required: true, trim: true ,unique : true},
+    username: { type: String, required: true, trim: true, unique: true },
     password: { type: String, required: true }
 })
 const recipeSchema = new Schema({
@@ -34,6 +34,7 @@ const recipeSchema = new Schema({
     cookTime: { type: Number, required: true },
     servings: { type: Number, required: true },
     visibility: { type: String, enum: ["public", "private"], default: "private" },
+    shareToken: { type: String, unique: true, sparse: true, select: false },
     owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 
 })
