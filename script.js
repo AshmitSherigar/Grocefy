@@ -5,12 +5,17 @@ const userRoutes = require("./routes/userRoute")
 const adminRoutes = require("./routes/adminRoute")
 const recipeRoutes = require("./routes/recipeRoute")
 const app = express()
-
+const rateLimit = require("express-rate-limit")
 const PORT = process.env.PORT || 5000
 const MONGO_URL = process.env.MONGO_URL;
 
-
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    message: { message: "Too many request.Try again after 15 minutes" }
+})
 // Middleware
+app.use(limiter) // limits against DDoS
 app.use(express.json()) // Parse the body
 app.use((req, _, next) => { // Log every request
     console.log(`${req.method} ${req.url}`);

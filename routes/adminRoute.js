@@ -3,9 +3,11 @@ const router = express.Router()
 const { Admin } = require("../db/scheme")
 const JWT_SECRET = process.env.JWT_SECRET
 const jwt = require("jsonwebtoken")
+const { adminSignSchema } = require("../schemas/schema")
+const  validateMiddleware  = require("../middleware/validateMiddleware")
 
 // Admin Route
-router.post("/auth/register", (req, res) => {
+router.post("/auth/register", validateMiddleware(adminSignSchema), (req, res) => {
     const { username, password } = req.body
     Admin.create({ username, password })
         .then(() => {
@@ -15,7 +17,7 @@ router.post("/auth/register", (req, res) => {
             res.status(400).json({ message: "Admin cannot be created", error: err.message })
         })
 })
-router.post("/auth/login", (req, res) => {
+router.post("/auth/login", validateMiddleware(adminSignSchema), (req, res) => {
     const { username, password } = req.body
     Admin.findOne({ username })
         .then((admin) => {
