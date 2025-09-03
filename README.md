@@ -23,10 +23,6 @@ This service allows users to create and manage recipes, generate grocery lists b
   - Authentication/authorization guard
   - Input validation (Zod)
   - Rate limiting
-  - Centralized error handling
-- 📊 **Optional Enhancements**
-  - Nutrition API integration for calorie/macros info
-  - Auto-suggestions for missing grocery items
 
 ---
 
@@ -35,8 +31,7 @@ This service allows users to create and manage recipes, generate grocery lists b
 - **Backend Framework**: Node.js + Express  
 - **Database**: MongoDB
 - **Authentication**: JWT + bcrypt  
-- **Validation**: Zod 
-- **Logging**: Morgan  
+- **Validation**: Zod  
 
 ---
 
